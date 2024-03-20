@@ -5,14 +5,17 @@ using System;
 using System.Text.RegularExpressions;
 using static System.Net.Mime.MediaTypeNames;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace Лабораторная_работа__11
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            Queue<Watch> queue = new Queue<Watch>();
-            for (int i = 0; i < 5; i++)
+            //1 задание
+            Queue<Watch> queue = new Queue<Watch>(); //создание очереди
+            for (int i = 0; i < 5; i++) //заполнение очереди разными элементами
             {
                 Watch c = new Watch();
                 c.RandomInit();
@@ -24,15 +27,27 @@ namespace Лабораторная_работа__11
                 c2.RandomInit();
                 queue.Enqueue(c2);
             }
-            bool number1 = true;
+            for (int i = 0; i < 5; i++)
+            {
+                DigitalWatch c2 = new DigitalWatch();
+                c2.RandomInit();
+                queue.Enqueue(c2);
+            }
+            for (int i = 0; i < 5; i++)
+            {
+                SmartWatch c2 = new SmartWatch();
+                c2.RandomInit();
+                queue.Enqueue(c2);
+            }
+            bool number1 = true; //меню
             do
             {
                 Console.WriteLine("Меню:" +
                     "\n1.Добавить объект" +
                     "\n2.Удалить первый объект" +
-                    "\n3.Запрос количество пульсов" +
-                    "\n4.Запрос количество часов" +
-                    "\n5.Запрос печать всех уник часов" +
+                    "\n3.Запрос количество часов с пульсометром" +
+                    "\n4.Запрос о новом бренде часов" +
+                    "\n5.Запрос об уникальном стиле аналог часов" +
                     "\n6.Вывести все объекты" +
                     "\n7.Выполнить клонирование коллекции" +
                     "\n8.Сортировка по бренду по алфавиту" +
@@ -44,78 +59,78 @@ namespace Лабораторная_работа__11
                         Console.WriteLine("Введите элемент для добавления:");
                         Watch watch1 = new Watch();
                         watch1.Init();
-                        queue.Enqueue(new Watch(watch1.Brand, watch1.YearIssue, 1));
+                        queue.Enqueue(new Watch(watch1.Brand, watch1.YearIssue, 1)); //метод для добавления элемента
+                        Console.WriteLine("Элемент добавлен");
                         break;
                     case "2":
                         if (queue.Count == 0)
                         {
-                            Console.WriteLine("Коллекция пуста");
+                            Console.WriteLine("Коллекция пуста"); //проверка на пустоту
                             break;
                         }
                         else
                         {
-                            queue.Dequeue();                       //удаляет самый первый объект в очереди
+                            queue.Dequeue(); //удаляет самый первый объект в очереди
+                            Console.WriteLine("Элемент удален");
                             break;
                         }
                     case "3":
                         int count = 0;
                         foreach (var item in queue)
                         {
-                            if (item is Watch)
-                                count++;
+                            if (item is SmartWatch c)
+                                if (c.Pulsometer == true)
+                                    count++;
                         }
-                        Console.WriteLine($"Количество = {count}");
-                        Console.Write("Чтобы продолжить нажмите Enter");
-                        Console.ReadLine();
+                        Console.WriteLine($"Количество умных часов с датчиком измерения пульса: {count}");
                         break;
                     case "4":
-                        int count2 = 0;
-                        foreach (var item in queue)
+                        int maxYear = 0;
+                        string newBrand = "";
+                        foreach (Watch clock in queue) //самый новый бренд часов по году выпуска
                         {
-                            if (item is Watch)
+                            if (clock.YearIssue > maxYear)
                             {
-                                if (((Watch)item).Brand == "NoBrand")
-                                {
-                                    count2++;
-                                }
+                                newBrand = clock.Brand;
+                                maxYear = clock.YearIssue;
                             }
                         }
-                        Console.WriteLine($"Количество = {count2}");
-                        Console.Write("Чтобы продолжить нажмите Enter");
-                        Console.ReadLine();
+                        Console.WriteLine($"Самый новый бренд часов: {newBrand}");
                         break;
                     case "5":
-                        foreach (var item in queue)
+                        int countClassic = 0;
+                        int countSport = 0;
+                        int countFashion = 0;
+                        int countPremium = 0;
+                        foreach (var item in queue)//уникальные стили аналоговых часов
                         {
-                            if (item is Watch)
-                            {
-                                ((AnalogWatch)item).Show();
-                                Console.WriteLine("");
-                            }
+                            if (item is AnalogWatch clock)
+                                if (clock.Style == "classic") countClassic++;
+                                else if (clock.Style == "sport") countSport++;
+                                else if (clock.Style == "fashion") countFashion++;
+                                else if (clock.Style == "premium") countPremium++;
                         }
-                        Console.WriteLine("");
-                        Console.Write("Чтобы продолжить нажмите Enter");
-                        Console.ReadLine();
+                        Console.WriteLine("Уникальные стили аналоговых часов: ");
+                        if (countClassic == 1) { Console.WriteLine("classic"); }
+                        if (countSport == 1) { Console.WriteLine("sport"); }
+                        if (countPremium == 1) { Console.WriteLine("premium"); }
+                        if (countFashion == 1) { Console.WriteLine("fashion"); }
+                        else Console.WriteLine("уникальных стилей нет");
                         break;
                     case "6":
                         foreach (var item in queue)
                         {
-                            item.Show();
-                            Console.WriteLine("");
+                            Console.WriteLine(item.ToString()); //вывод элементов
                         }
                         Console.WriteLine("");
-                        Console.Write("Чтобы продолжить нажмите Enter");
-                        Console.ReadLine();
                         break;
                     case "7":
-                        Queue clonQueue = new Queue(queue);                                   //копия
+                        Queue clonQueue = new Queue(queue);   //копия
                         Console.WriteLine($"Количество ссылок в клоне: {clonQueue.Count}");
                         Console.WriteLine("");
-                        Console.Write("Чтобы продолжить нажмите Enter");
-                        Console.ReadLine();
                         break;
                     case "8":
-                        Watch[] SortedArray = new Watch[queue.Count];
+                        Watch[] SortedArray = new Watch[queue.Count]; //сортировка
                         int index = 0;
                         foreach (var item in queue)
                         {
@@ -125,21 +140,16 @@ namespace Лабораторная_работа__11
                         Array.Sort(SortedArray);
                         foreach (Watch item in SortedArray)
                         {
-                            item.Show();
-                            Console.WriteLine();
+                            Console.WriteLine(item);
                         }
                         Console.WriteLine("");
-                        Console.Write("Чтобы продолжить нажмите Enter");
-                        Console.ReadLine();
                         break;
                     case "9":
-                        Console.Write("Введите номер объекта: ");
+                        Console.Write("Введите номер объекта: "); //поиск эелмента по его номеру в очереди
                         int key_obj = int.Parse(Console.ReadLine());
                         Console.WriteLine("");
-                        queue.ToArray()[key_obj - 1].Show();               //очередь превращает в массив
+                        queue.ToArray()[key_obj - 1].Show();//очередь превращает в массив
                         Console.WriteLine("");
-                        Console.Write("Чтобы продолжить нажмите Enter");
-                        Console.ReadLine();
                         break;
                     case "10":
                         number1 = false;
@@ -149,10 +159,9 @@ namespace Лабораторная_работа__11
                 }
             } while (number1);
 
-
-            Hashtable ht = new Hashtable();
-            Console.WriteLine($"В словаре {ht.Count} элементов");
-            for (int i = 0; i < 10; i++)
+            //2 задание
+            Hashtable ht = new Hashtable(); //создание хеш-таблицы
+            for (int i = 0; i < 5; i++)
             {
                 try
                 {
@@ -163,16 +172,39 @@ namespace Лабораторная_работа__11
                 }
                 catch (Exception e) { i--; }
             }
+            for (int i = 0; i < 5; i++)
+            {
+                try
+                {
+                    DigitalWatch c = new DigitalWatch();
+                    c.RandomInit();
+                    Watch w = new Watch(c.Brand, c.YearIssue, 1);
+                    ht.Add(w, c);
+                }
+                catch (Exception e) { i--; }
+            }
+            for (int i = 0; i < 5; i++)
+            {
+                
+                try
+                {
+                    SmartWatch c = new SmartWatch();
+                    c.RandomInit();
+                    Watch w = new Watch(c.Brand, c.YearIssue, 1);
+                    ht.Add(w, c);
+                }
+                catch (Exception e) { i--; }
+            }
             Console.WriteLine("DICTIONARY");
-            bool number2 = true;             
+            bool number2 = true; //меню        
             do
             {
                 Console.WriteLine("Меню:" +
                     "\n1.Добавить объекты" +
                     "\n2.Удалить объекты" +
-                    "\n3.Запросить кол" +
-                    "\n4.Запросить количество" +
-                    "\n5.Запросить печать всех watch" +
+                    "\n3.Запрос количество часов с пульсометром" +
+                    "\n4.Запрос о новом бренде часов" +
+                    "\n5.Запрос об уникальном стиле аналог часов" +
                     "\n6.Вывести все объекты коллекции на печать" +
                     "\n7.Выполнить клонирование коллекции" +
                     "\n8.Сортировка по бренду по алфавиту" +
@@ -205,61 +237,59 @@ namespace Лабораторная_работа__11
                         int count = 0;
                         foreach (var item in ht.Values)          //для всех значений в коллекции значений
                         {
-                            if (item is AnalogWatch)                           //относится ли к analog
-                                count++;
+                            if (item is SmartWatch c)
+                                if (c.Pulsometer == true)
+                                    count++;
                         }
-                        Console.WriteLine($"Количество = {count}");
-                        Console.Write("Чтобы продолжить нажмите Enter");
-                        Console.ReadLine();
+                        Console.WriteLine($"Количество умных часов с датчиком измерения пульса: {count}");
                         break;
                     case "4":                                            //четвёртое действие
-                        int count2 = 0;
-                        foreach (var item in ht.Values)
+                        int maxYear = 0;
+                        string newBrand = "";
+                        foreach (Watch clock in ht.Values)
                         {
-                            if (item is Watch)
+                            if (clock.YearIssue > maxYear)
                             {
-                                if (((Watch)item).Brand == "NoBrand")
-                                {
-                                    count2++;
-                                }
+                                newBrand = clock.Brand;
+                                maxYear = clock.YearIssue;
                             }
                         }
-                        Console.WriteLine($"Количество watch = {count2}");
-                        Console.Write("Чтобы продолжить нажмите Enter");
-                        Console.ReadLine();
+                        Console.WriteLine($"Самый новый бренд часов: {newBrand}");
                         break;
                     case "5":                                            //пятое дейсвтвие
-                        foreach (var item in ht.Values)
+                        int countClassic = 0;
+                        int countSport = 0;
+                        int countFashion = 0;
+                        int countPremium = 0;
+                        foreach (var item in ht.Values)//уникальные стили аналоговых часов
                         {
-                            if (item is Watch)
-                            {
-                                ((Watch)item).Show();
-                                Console.WriteLine("");
-                            }
+                            if (item is AnalogWatch clock)
+                                if (clock.Style == "classic") countClassic++;
+                                else if (clock.Style == "sport") countSport++;
+                                else if (clock.Style == "fashion") countFashion++;
+                                else if (clock.Style == "premium") countPremium++;
                         }
-                        Console.WriteLine("");
-                        Console.Write("Чтобы продолжить нажмите Enter");
-                        Console.ReadLine();
+                        Console.WriteLine("Уникальные стили аналоговых часов: ");
+                        if (countClassic == 1) { Console.WriteLine("classic"); }
+                        if (countSport == 1) { Console.WriteLine("sport"); }
+                        if (countPremium == 1) { Console.WriteLine("premium"); }
+                        if (countFashion == 1) { Console.WriteLine("fashion"); }
+                        else Console.WriteLine("уникальных стилей нет");
                         break;
                     case "6":                                            //шестое действие
                         foreach (var item in ht.Values)
                         {
-                            ((Watch)item).Show();
-                            Console.WriteLine("");
+                            Console.WriteLine(item);
                         }
                         Console.WriteLine("");
-                        Console.Write("Чтобы продолжить нажмите Enter");
-                        Console.ReadLine();
                         break;
                     case "7":                                           //седьмое действие
                         Hashtable clon = (Hashtable)ht.Clone();  //клонирование, присваивает ссылку
                         Console.WriteLine($"Количество ссылок в клоне: {clon.Count}");
                         Console.WriteLine("");
-                        Console.Write("Чтобы продолжить нажмите Enter");
-                        Console.ReadLine();
                         break;
                     case "8":                                           //восьмое действие
-                        Watch[] SortedArray = new Watch[ht.Count];
+                        Watch[] SortedArray = new Watch[ht.Count]; //создаем массив для сортировки
                         int index = 0;
                         foreach (var item in ht.Values)
                         {
@@ -269,21 +299,16 @@ namespace Лабораторная_работа__11
                         Array.Sort(SortedArray);
                         foreach (Watch item in SortedArray)
                         {
-                            item.Show();
-                            Console.WriteLine();
+                            Console.WriteLine(item);
                         }
                         Console.WriteLine("");
-                        Console.Write("Чтобы продолжить нажмите Enter");
-                        Console.ReadLine();
                         break;
                     case "9":                                           //девятое действие
                         Console.Write("Введите ключ объекта: ");
                         string key_obj = Console.ReadLine();
                         Console.WriteLine("");
-                        ((Watch)ht[key_obj]).Show();     //поиск по ключу и вывод
+                        Console.WriteLine((Watch)ht[key_obj]);     //поиск по ключу и вывод
                         Console.WriteLine("");
-                        Console.Write("Чтобы продолжить нажмите Enter");
-                        Console.ReadLine();
                         break;
                     case "10":                                          //десятое действие
                         number2 = false;
@@ -293,7 +318,8 @@ namespace Лабораторная_работа__11
                 }
             } while (number2);
 
-            TestCollections a = new TestCollections();
+            //3 задание
+            TestCollections a = new TestCollections(); //запуск 3 задания
         }
 
     }

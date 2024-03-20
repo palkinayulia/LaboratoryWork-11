@@ -27,9 +27,9 @@ namespace Лабораторная_работа__11
 
         public TestCollections()
         {
-            st1 = new Stack<Watch>(1000);   //в () указан размер
+            st1 = new Stack<Watch>(1000);   //в () размер
             st2 = new Stack<string>(1000);
-            dic1 = new Dictionary<Watch, AnalogWatch>(1000);
+            dic1 = new Dictionary<Watch, AnalogWatch>(1000);//создание коллекций
             dic2 = new Dictionary<string, AnalogWatch>(1000);
             for (int i = 0; i < 1000; i++)
             {
@@ -42,10 +42,7 @@ namespace Лабораторная_работа__11
                     dic1.Add(t.GetBase, t);
                     dic2.Add(t.GetBase.ToString(), t);
                 }
-                catch
-                {
-
-                }
+                catch { }
                 if (i == 0)
                 {
                     first = t.GetBase;
@@ -62,19 +59,19 @@ namespace Лабораторная_работа__11
                     endV = t.GetTest;
                 }
             }
-            Menu();
+            Menu(); //функция меню
         }
         private void Menu()
         {
+            bool stop = true;
             do
             {
-                Console.Clear();
-                Console.WriteLine("Выберите действие:" +
+                Console.WriteLine("Меню" +
                     "\n1.Добавить элемент в коллекцию" +
                     "\n2.Удалить элемент из коллекции" +
                     "\n3.Посмотреть все ключи" +
                     "\n4.Посмотреть затраченное время на поиск" +
-                    "\n5.Выход");
+                    "\n5.Завершить");
                 switch (Console.ReadLine())
                 {
                     case "1":
@@ -100,7 +97,7 @@ namespace Лабораторная_работа__11
                         w = new AnalogWatch();
                         w.Init();
                         int index = 0;
-                        var b = (dic1.Values).ToArray();    //присваем коллекцию значений в массив
+                        var b = dic1.Values.ToArray();    //присваем коллекцию значений в массив
                         foreach (var item in b)
                         {
                             if ((w.Brand == b[index].Brand) && (w.YearIssue == b[index].YearIssue))
@@ -109,12 +106,11 @@ namespace Лабораторная_работа__11
                             }
                             index++;
                         }
-                        index = 0;
                         st1.Clear();        //очищение стэков и словарей
                         st2.Clear();
                         dic1.Clear();
                         dic2.Clear();
-                        foreach (var item in b)
+                        foreach (var item in b) //заполяем коллекции снова
                         {
                             if (item != null)
                             {
@@ -137,8 +133,6 @@ namespace Лабораторная_работа__11
                     case "3":
                         foreach (var item in st2)
                             Console.WriteLine(item);
-                        Console.Write("Нажмите Enter, чтобы продолжить");
-                        Console.ReadLine();
                         break;
                     case "4":
                         Console.Clear();
@@ -261,7 +255,7 @@ namespace Лабораторная_работа__11
                             Console.WriteLine($"Stack<Watch> : {sw.Elapsed}");
                         }
                         else
-                            Console.WriteLine("Не найден!");
+                            Console.WriteLine($"Не найден!{sw.Elapsed}");
                         sw.Reset();
                         sw.Start();
                         if (st2.Contains(outof.ToString()))
@@ -270,7 +264,7 @@ namespace Лабораторная_работа__11
                             Console.WriteLine($"Stack<string> : {sw.Elapsed}");
                         }
                         else
-                            Console.WriteLine("Не найден!");
+                            Console.WriteLine($"Не найден!{sw.Elapsed}");
                         sw.Reset();
                         sw.Start();
                         if (dic1.ContainsKey(outof))
@@ -279,7 +273,7 @@ namespace Лабораторная_работа__11
                             Console.WriteLine($"Dictionary<Watch, AnalogWatch> : {sw.Elapsed}");
                         }
                         else
-                            Console.WriteLine("Не найден!");
+                            Console.WriteLine($"Не найден!{sw.Elapsed}");
                         sw.Reset();
                         sw.Start();
                         if (dic1.ContainsValue(outofV))
@@ -288,7 +282,7 @@ namespace Лабораторная_работа__11
                             Console.WriteLine($"Dictionary<Watch, AnalogWatch> | ContainsValue : {sw.Elapsed}");
                         }
                         else
-                            Console.WriteLine("Не найден!");
+                            Console.WriteLine($"Не найден!{sw.Elapsed}");
                         sw.Reset();
                         sw.Start();
                         if (dic2.ContainsKey(outof.ToString()))
@@ -297,17 +291,15 @@ namespace Лабораторная_работа__11
                             Console.WriteLine($"Dictionary<string, AnalogWatch> : {sw.Elapsed}");
                         }
                         else
-                            Console.WriteLine("Не найден!");
+                            Console.WriteLine($"Не найден!{sw.Elapsed}");
                         sw.Reset();
                         Console.WriteLine("");
-                        Console.Write("Чтобы продолжить, нажмите Enter");
-                        Console.ReadLine();
                         break;
                     case "5":
-                        Environment.Exit(0);    //прекращение работы программы 
+                        stop = false;   //прекращение работы программы 
                         break;
                 }
-            } while (true);
+            } while (stop);
         }
     }
 }
